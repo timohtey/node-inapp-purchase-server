@@ -1,2 +1,2 @@
-# node_inapp_purchase_server
+# node-inapp-purchase-server
 Server for the In-App Purchase Verifications
