@@ -13,7 +13,6 @@ const _verifyReceipt = async ({ platform, purchaseToken }) => {
   if (platform === 'android')
     error = 'Purchase verification for Android is not yet implemented!';
   else if (platform === 'apple')
-    // Add Saving of Purchase details here
     await PurchasesService.verifyAppleReceipt(purchaseToken)
       .then((products) => (result = products))
       .catch((err) => (error = err));
