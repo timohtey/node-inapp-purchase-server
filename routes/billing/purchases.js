@@ -3,16 +3,16 @@ const PurchasesService = require('../../core/billing/PurchasesService');
 
 const router = Router();
 
-const _verifyReceipt = async ({ platform, purchaseToken }) => {
+const _verifyReceipt = async (platform, purchaseToken) => {
   let error = '';
   let result;
 
-  if (!['apple', 'android'].includes(platform))
+  if (!['ios', 'android'].includes(platform))
     error = `Platform ${platform} is not supported!`;
 
   if (platform === 'android')
     error = 'Purchase verification for Android is not yet implemented!';
-  else if (platform === 'apple')
+  else if (platform === 'ios')
     await PurchasesService.verifyAppleReceipt(purchaseToken)
       .then((products) => (result = products))
       .catch((err) => (error = err));
@@ -27,45 +27,49 @@ const _verifyReceipt = async ({ platform, purchaseToken }) => {
  * Saves and verifies a purchase of the user with the Platform's Bill System
  *
  * @param :id - ID of the purchase
- * @param :platform - Mobile platform of the app session (apple or android)
+ * @param :platform - Mobile platform of the app session (ios or android)
  * @param :purchaseToken - Purchase Token to be verified
  */
-router.post(
-  '/:id/platforms/:platform/purchaseTokens/:purchaseToken',
-  async (req, res) => {
-    const { purchase } = req.body;
+router.post('/:id/platforms/:platform', async (req, res) => {
+  const { purchase } = req.body;
+  const { id, platform } = req.params;
+  const { error, result } = await _verifyReceipt(
+    platform,
+    purchase.transactionReceipt
+  );
 
-    const { id } = req.params;
-
-    const { error, result } = await _verifyReceipt(req.params);
-
-    if (error) return res.status(500).send(`Purchase not verified: ${error}`);
-    else {
-      // add saving of purchase details here
-    }
-
-    return res.send('Purchase verified!', result);
+  if (error) return res.status(500).send(`Purchase not verified: ${error}`);
+  else {
+    // add saving of purchase details here
   }
-);
+
+  return res.send({
+    message: 'Purchase verified!',
+    data: result,
+  });
+});
 
 /**
  * Verifies a purchase of the user with the Platform's Bill System
  *
  * @param :id - ID of the purchase
- * @param :platform - Mobile platform of the app session (apple or android)
+ * @param :platform - Mobile platform of the app session (ios or android)
  * @param :purchaseToken - Purchase Token to be verified
  */
-router.post(
-  '/:id/platforms/:platform/purchaseTokens/:purchaseToken/verify',
-  async (req, res) => {
-    const { id } = req.params;
+router.post('/:id/platforms/:platform/verify', async (req, res) => {
+  const { purchase } = req.body;
+  const { id, platform } = req.params;
+  const { error, result } = await _verifyReceipt(
+    platform,
+    purchase.transactionReceipt
+  );
 
-    const { error, result } = await _verifyReceipt(req.params);
+  if (error) return res.status(500).send(`Purchase not verified: ${error}`);
 
-    if (error) return res.status(500).send(`Purchase not verified: ${error}`);
-
-    return res.send('Purchase verified!', result);
-  }
-);
+  return res.send({
+    message: 'Purchase verified!',
+    data: result,
+  });
+});
 
 module.exports = router;

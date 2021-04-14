@@ -10,7 +10,6 @@ var PurchasesService = (function () {
   //   email: 'INSERT SERVICE ACCOUNT EMAIL HERE',
   //   key: 'INSERT YOUR PRIVATE KEY HERE',
   // });
-
   appleReceiptVerify.config({
     secret: process.env.APPLE_IN_APP_PURCHASE_SECRET,
     environment: [environment],
