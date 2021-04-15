@@ -16,7 +16,7 @@ const _verifyReceipt = async (platform, purchaseToken) => {
     await PurchasesService.verifyAppleReceipt(purchaseToken)
       .then((products) => (result = products))
       .catch((err) => (error = err));
-
+      
   return {
     error,
     result,

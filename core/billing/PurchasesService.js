@@ -13,9 +13,7 @@ var PurchasesService = (function () {
   appleReceiptVerify.config({
     secret: process.env.APPLE_IN_APP_PURCHASE_SECRET,
     environment: [environment],
-    verbose: true,
-    ignoreExpired: true,
-    ignoreExpiredError: true,
+    extended: true,
   });
 
   /**
